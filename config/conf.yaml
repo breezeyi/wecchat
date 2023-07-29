@@ -1,0 +1,47 @@
+# 定义常量，用于存储测试微信公众号的 AppID 和 AppSecret替换成自己的
+APPID: 123
+APPSECRET: 123
+
+# 定义每日一句模板消息的模板 ID，替换成自己的
+SentTemplateID: GhE0johqaaAFLUAs4v6rwCtC4UmMyRTa0QhxBIPKnZU
+
+# 定义天气预报模板消息的模板 ID，替换成自己的
+WeatTemplateID: 2cXOYhi7qrWxEcBazuSNBmJ1j3yTmuhqST41qwdGTo4
+
+# 定义回复你好模板消息的模板 ID，替换成自己的
+HelloTemplateID: 5OLjTkqytEPmdtsUUtUKXQu5TnuvCV0t18qGl9QGxaI
+
+# 定义天气预报模板消息的模板 ID，替换成自己的
+#WeatTemplateID: zLDsvKSv58TmvigoMwqR_BwGT6o78QrfSno9iTLTBgc
+
+
+# 定义天气 API 的版本号
+WeatherVersion: v1
+
+#服务器启动端口号
+port: 8088
+
+#验证微信请求校验token
+token: wechattoken
+
+
+
+#感谢词自动模版
+Reply:
+      #接收到你好
+      Hello: 你好
+      #第一次关注
+      OneConcern: 欢迎加入我们的大家庭，我们将和您一起分享知识、经验和快乐，让您在这里感受到家的温暖和舒适
+
+
+#过滤字段值
+Filtration: 我 想 要 查 看  的 天气 , 询 帮 每  定 时 给 我 发 送 你 好 知 道 当天 明天 后天 早上 晚上 中午 1 2 3 4 5 6 7 8 9 0 - / ——  
+
+
+#MySQL配置
+mysql: 
+      dns: root:123456@tcp(localhost:3306)/weather?charset=utf8mb4&parseTime=True&loc=Local
+
+#高德地图key
+weather:
+      key: 123
