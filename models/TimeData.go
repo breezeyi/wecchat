@@ -11,13 +11,14 @@ import (
 
 // 发送天气的格式
 type Weather struct {
-	City    string // 城市
-	Week    string // 日期
-	Weather string // 天气
-	Temp    string // 温度
-	Wind    string // 风向
-	Power   string // 风力
-	Prompt  string // 提示
+	City        string // 城市
+	Week        string // 日期
+	DayAndNight string //白天还是晚上，默认白天
+	Weather     string // 天气
+	Temp        string // 温度
+	Wind        string // 风向
+	Power       string // 风力
+	Prompt      string // 提示
 }
 
 // 处理有无用户特殊要求
@@ -45,47 +46,48 @@ func UserRequirements(content string, data Data, userid string) {
 func dispose(number int, content string, data Data, userid string) {
 	//做出判断用户是否有特殊要求，没有则发送默认格式（根据当前时间来判断发送）
 
-	if strings.Contains(content, "晚上") {
+	if strings.Contains(content, "晚上") || strings.Contains(content, "傍晚") {
 		//赋值为晚上天气信息
 		weather := Weather{
 			City: data.Forecasts[0].City,
 			//Week:    data.Forecasts[0].Casts[number].Week,
-			Weather: data.Forecasts[0].Casts[number].Nightweather,
-			Temp:    data.Forecasts[0].Casts[number].Nighttemp + "℃",
-			Wind:    data.Forecasts[0].Casts[number].Nightwind,
-			Power:   data.Forecasts[0].Casts[number].Nightpower + "级",
-			Prompt:  data.Prompt,
+			Weather:     data.Forecasts[0].Casts[number].Nightweather,
+			Temp:        data.Forecasts[0].Casts[number].Nighttemp + "℃",
+			Wind:        data.Forecasts[0].Casts[number].Nightwind,
+			Power:       data.Forecasts[0].Casts[number].Nightpower + "级",
+			Prompt:      data.Prompt,
+			DayAndNight: "晚上",
 		}
 		//根据number值给日期添加后缀  今天 明天 后天
 		if number == 0 {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(今天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(今天)"
 		} else if number == 1 {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(明天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(明天)"
 		} else {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(后天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(后天)"
 		}
 
 		//传入赋值后的结构体和接受用户的ID
 		packdata(weather, userid)
 	} else {
 		//赋值为白天天气信息
-		//赋值为晚上天气信息
 		weather := Weather{
 			City: data.Forecasts[0].City,
 			//Week:    data.Forecasts[0].Casts[number].Week,
-			Weather: data.Forecasts[0].Casts[number].Dayweather,
-			Temp:    data.Forecasts[0].Casts[number].Daytemp + "℃",
-			Wind:    data.Forecasts[0].Casts[number].Daywind,
-			Power:   data.Forecasts[0].Casts[number].Daypower + "级",
-			Prompt:  data.Prompt,
+			Weather:     data.Forecasts[0].Casts[number].Dayweather,
+			Temp:        data.Forecasts[0].Casts[number].Daytemp + "℃",
+			Wind:        data.Forecasts[0].Casts[number].Daywind,
+			Power:       data.Forecasts[0].Casts[number].Daypower + "级",
+			Prompt:      data.Prompt,
+			DayAndNight: "白天",
 		}
 		//根据number值给日期添加后缀  今天 明天 后天
 		if number == 0 {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(今天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(今天)"
 		} else if number == 1 {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(明天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(明天)"
 		} else {
-			weather.Week = data.Forecasts[0].Casts[number].Week + "(后天)"
+			weather.Week = JacquardUp(data.Forecasts[0].Casts[number].Week) + "(后天)"
 		}
 
 		//传入赋值后的结构体和接受用户的ID
@@ -97,7 +99,8 @@ func dispose(number int, content string, data Data, userid string) {
 func packdata(data Weather, userid string) {
 	reqdata := "{\"city\":{\"value\":\"" +
 		data.City + "\"}, \"week\":{\"value\":\"" +
-		data.Week + "\"}, \"weather\":{\"value\":\"" +
+		data.Week + "\"}, \"dayandnight\":{\"value\":\"" +
+		data.DayAndNight + "\"}, \"weather\":{\"value\":\"" +
 		data.Weather + "\"}, \"temp\":{\"value\":\"" +
 		data.Temp + "\"}, \"wind\":{\"value\":\"" +
 		data.Wind + "\"}, \"power\":{\"value\":\"" +
@@ -124,4 +127,10 @@ func DetermineTheCurrentTime() bool {
 		log.Println("现在是晚上")
 		return false
 	}
+}
+
+// 替换器将数字转换为对应的文字
+func JacquardUp(number string) string {
+	chnStr := strings.NewReplacer("1", "周一", "2", "周二", "3", "周三", "4", "周四", "5", "周五", "6", "周六", "7", "周日").Replace(number)
+	return chnStr
 }

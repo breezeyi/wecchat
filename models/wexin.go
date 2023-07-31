@@ -90,7 +90,8 @@ func Templatepost(access_token string, reqdata string, fxurl string, templateid 
 		"\", \"data\": " + reqdata + "}"
 
 	resp, err := http.Post(url,
-		"application/x-www-form-urlencoded",
+		//"application/x-www-form-urlencoded",
+		"application/json",
 		strings.NewReader(string(reqbody)))
 	if err != nil {
 		fmt.Println(err)
@@ -113,7 +114,7 @@ func WechatText(msg Message, FromUserName string) {
 	log.Println(msg)
 	switch {
 	//用户发送你好
-	case msg.Content == "你好":
+	case msg.Content == "你好", msg.Content == "在吗？", msg.Content == "你好!", msg.Content == "在吗":
 		Templatepost(Getaccesstoken(), Hello(), "", viper.GetString("HelloTemplateID"), FromUserName)
 
 		//用户发送每日一句
@@ -124,6 +125,9 @@ func WechatText(msg Message, FromUserName string) {
 		//用户想要查询天气时
 	case strings.Contains(msg.Content, "天气"):
 		Filtration(msg)
+		//给出提示
+	default:
+		Templatepost(Getaccesstoken(), Qrompt(), "", viper.GetString("HelloTemplateID"), FromUserName)
 	}
 }
 
@@ -132,6 +136,15 @@ func Hello() string {
 
 	reqdata := "{\"data\":{\"value\":\"" +
 		viper.GetString("Reply.Hello") + "\"}}"
+	return reqdata
+
+}
+
+// 自动回复提示字段
+func Qrompt() string {
+
+	reqdata := "{\"data\":{\"value\":\"" +
+		viper.GetString("Reply.Qrompt") + "\"}}"
 	return reqdata
 
 }
